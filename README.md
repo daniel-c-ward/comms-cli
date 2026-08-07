@@ -12,7 +12,7 @@ A CLI tool for managing the comms-net hub and pi agents.
 
 ```bash
 # Clone the repository
-git clone <repository-url>
+git clone https://github.com/daniel-c-ward/comms-cli
 cd comms-cli
 
 # Install the comms-net extension into pi
