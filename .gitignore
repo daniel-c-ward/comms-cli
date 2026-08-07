@@ -1,0 +1,36 @@
+# Binaries
+/comms
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+
+# Test output
+*.test
+*.out
+
+# Go workspace files
+go.work
+go.work.sum
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Misc
+# If you use a config file that should not be versioned, add it here
+# config.json
+
+# Already ignored (but keeping for clarity)
+.git
+.scratch
+docs
+graphify-out
