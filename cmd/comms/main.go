@@ -5,7 +5,7 @@ import (
 	"os"
 )
 
-const version = "0.0.1"
+const version = "0.1.0"
 
 const usage = `comms - comms hub and pi agent CLI
 

@@ -1,0 +1,82 @@
+# GoReleaser configuration for comms-cli
+# https://goreleaser.com
+
+project_name: comms-cli
+
+# Build settings
+builds:
+  - id: comms-cli
+    binary: comms
+    goos:
+      - linux
+      - darwin
+      - windows
+    goarch:
+      - amd64
+      - arm64
+    env:
+      - CGO_ENABLED=0
+    ldflags:
+      - -s -w
+      - -X main.version={{.Version}}
+
+# Archive settings
+archive:
+  format: tar.gz
+  name_template: >-
+    {{ .ProjectName }}_
+    {{- if eq .Os "windows" }}
+    windows-
+    {{- else if eq .Os "darwin" }}
+    darwin-
+    {{- else }}
+    linux-
+    {{- end }}
+    {{- if eq .Arch "amd64" }}x86_64
+    {{- else if eq .Arch "arm64" }}aarch64
+    {{- else }}{{ .Arch }}{{ end }}
+    {{- if .Arm }}v{{ .Arm }}{{ end }}
+
+# Checksum
+checksum:
+  name_template: 'checksums.txt'
+
+# Snapshots (for testing)
+snapshot:
+  name_template: "{{ .Tag }}-next"
+
+# Release settings
+release:
+  github:
+    owner: daniel-c-ward
+    name: comms-cli
+  # If not using GitHub Actions, you may need to set GITHUB_TOKEN here via env.
+
+# Optional: Homebrew tap
+# brew:
+#   github:
+#     owner: daniel-c-ward
+#     name: homebrew-tap
+#   folder: Formula
+#   homepage: "https://github.com/daniel-c-ward/comms-cli"
+#   description: "CLI tool for managing the comms-net hub and pi agents"
+
+# Optional: Scoop
+# scoop:
+#   bucket:
+#     owner: daniel-c-ward
+#     name: scoop-bucket
+#   homepage: "https://github.com/daniel-c-ward/comms-cli"
+#   description: "CLI tool for managing the comms-net hub and pi agents"
+
+# Optional: Docker
+# dockers:
+#   - image_templates:
+#       - "danielcward/comms-cli:{{ .Version }}"
+#       - "danielcward/comms-cli:latest"
+#     dockerfile: Dockerfile
+#     use: buildx
+#     build_flag_templates:
+#       - "--label=org.opencontainers.image.version={{ .Version }}"
+#       - "--label=org.opencontainers.image.revision={{ .FullCommit }}"
+#       - "--label=org.opencontainers.image.source={{ .GitURL }}"

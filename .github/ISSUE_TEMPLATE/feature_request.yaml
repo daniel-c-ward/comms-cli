@@ -1,0 +1,65 @@
+name: Feature Request
+description: Suggest a new feature or enhancement
+title: "[FEATURE] "
+labels: ["enhancement"]
+assignees:
+  - daniel-c-ward
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for suggesting a feature! Please describe your idea in detail.
+  - type: textarea
+    id: feature-description
+    attributes:
+      label: Feature description
+      description: Please describe the feature you'd like to see.
+      placeholder: |
+        Example: Add support for TLS encryption to the hub.
+    validations:
+      required: true
+  - type: textarea
+    id: motivation
+    attributes:
+      label: Motivation / Use case
+      description: Why is this feature needed? What problem does it solve?
+      placeholder: |
+        Currently, the hub only supports plain TCP connections. Adding TLS would improve security for remote connections.
+    validations:
+      required: true
+  - type: textarea
+    id: alternative-solutions
+    attributes:
+      label: Alternative solutions
+      description: Have you considered any alternative approaches?
+      placeholder: |
+        For example, using stunnel or a reverse proxy.
+    validations:
+      required: false
+  - type: input
+    id: version
+    attributes:
+      label: Version
+      description: What version of comms-cli are you targeting?
+      placeholder: v0.2.0
+    validations:
+      required: false
+  - type: dropdown
+    id: priority
+    attributes:
+      label: Priority
+      description: How important is this feature to you?
+      options:
+        - Low
+        - Medium
+        - High
+        - Critical
+    validations:
+      required: false
+  - type: textarea
+    id: additional-context
+    attributes:
+      label: Additional context
+      description: Add any other context, sketches, or links to related issues here.
+      placeholder: |
+        Links to similar features in other projects, or references.
