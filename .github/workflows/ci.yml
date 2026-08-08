@@ -41,6 +41,7 @@ jobs:
         uses: golangci/golangci-lint-action@v9
         with:
           version: v2.12.2
+          skip-cache: true
 
       - name: Security check (govulncheck)
         uses: golang/govulncheck-action@v1
