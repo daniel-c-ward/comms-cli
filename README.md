@@ -4,7 +4,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![GitHub Release](https://img.shields.io/github/v/release/daniel-c-ward/comms-cli)](https://github.com/daniel-c-ward/comms-cli/releases)
 
-A CLI tool for managing the comms-net hub and pi agents.
+A CLI tool for managing the comms hub and pi agents.
 
 ## Installation
 
@@ -19,14 +19,14 @@ A CLI tool for managing the comms-net hub and pi agents.
 git clone https://github.com/daniel-c-ward/comms-cli
 cd comms-cli
 
-# Install the comms-net extension into pi
+# Install the comms extension into pi
 go install ./cmd/comms
 comms setup
 ```
 
 ## Setup
 
-After installation, run the setup command to install the coms-net extension:
+After installation, run the setup command to install the comms extension:
 
 ```bash
 comms setup
@@ -34,7 +34,7 @@ comms setup
 
 This will:
 1. Locate the pi executable on your PATH
-2. Install the coms-net extension into pi's auto-discovery directory
+2. Install the comms extension into pi's auto-discovery directory
 3. Smoke-verify that the extension loads correctly
 
 ## Usage
