@@ -16,7 +16,7 @@ A CLI tool for managing the comms hub and pi agents.
 
 ### Prerequisites
 - Go 1.26 or later
-- pi agent installed (https://pi.earendil.dev)
+- pi agent installed (https://https://pi.dev/)
 
 ### Install comms-cli
 
