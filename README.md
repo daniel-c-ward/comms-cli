@@ -1,7 +1,6 @@
 # comms-cli
 
 [![Build Status](https://github.com/daniel-c-ward/comms-cli/actions/workflows/ci.yml/badge.svg)](https://github.com/daniel-c-ward/comms-cli/actions)
-[![Go Report Card](https://goreportcard.com/badge/github.com/daniel-c-ward/comms-cli)](https://goreportcard.com/report/github.com/daniel-c-ward/comms-cli)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![GitHub Release](https://img.shields.io/github/v/release/daniel-c-ward/comms-cli)](https://github.com/daniel-c-ward/comms-cli/releases)
 
