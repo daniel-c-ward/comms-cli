@@ -1,7 +1,7 @@
 # comms-cli CLI Reference
 
 ## Overview
-CLI tool for managing the comms-net hub and pi agents.
+CLI tool for managing the comms hub and pi agents.
 
 ## Commands
 
