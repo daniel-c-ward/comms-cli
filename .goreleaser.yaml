@@ -1,12 +1,15 @@
 # GoReleaser configuration for comms-cli
 # https://goreleaser.com
 
+version: 2
+
 project_name: comms-cli
 
 # Build settings
 builds:
   - id: comms-cli
     binary: comms
+    main: ./cmd/comms
     goos:
       - linux
       - darwin
@@ -21,21 +24,22 @@ builds:
       - -X main.version={{.Version}}
 
 # Archive settings
-archive:
-  format: tar.gz
-  name_template: >-
-    {{ .ProjectName }}_
-    {{- if eq .Os "windows" }}
-    windows-
-    {{- else if eq .Os "darwin" }}
-    darwin-
-    {{- else }}
-    linux-
-    {{- end }}
-    {{- if eq .Arch "amd64" }}x86_64
-    {{- else if eq .Arch "arm64" }}aarch64
-    {{- else }}{{ .Arch }}{{ end }}
-    {{- if .Arm }}v{{ .Arm }}{{ end }}
+archives:
+  - formats:
+      - tar.gz
+    format_overrides:
+      - goos: windows
+        formats:
+          - zip
+    name_template: >-
+      {{ .ProjectName }}_
+      {{- if eq .Os "windows" }}windows-
+      {{- else if eq .Os "darwin" }}darwin-
+      {{- else }}linux-
+      {{- end }}{{ if eq .Arch "amd64" }}x86_64
+      {{- else if eq .Arch "arm64" }}aarch64
+      {{- else }}{{ .Arch }}{{ end }}
+      {{- if .Arm }}v{{ .Arm }}{{ end }}
 
 # Checksum
 checksum:
@@ -43,7 +47,7 @@ checksum:
 
 # Snapshots (for testing)
 snapshot:
-  name_template: "{{ .Tag }}-next"
+  version_template: "{{ .Tag }}-next"
 
 # Release settings
 release:

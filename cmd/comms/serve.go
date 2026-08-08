@@ -13,8 +13,8 @@ import (
 	"syscall"
 	"time"
 
-	"comms-cli/internal/server"
-	"comms-cli/internal/state"
+	"github.com/daniel-c-ward/comms-cli/internal/server"
+	"github.com/daniel-c-ward/comms-cli/internal/state"
 )
 
 func runServe(args []string) error {

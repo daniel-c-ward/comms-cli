@@ -13,7 +13,7 @@ import (
 	"testing"
 	"time"
 
-	"comms-cli/internal/server"
+	"github.com/daniel-c-ward/comms-cli/internal/server"
 )
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -41,7 +41,7 @@ func newEnv(t *testing.T, mutate func(*server.Config)) *testEnv {
 	if err != nil {
 		t.Fatalf("listen: %v", err)
 	}
-	go s.Serve(ln)
+	go func() { _ = s.Serve(ln) }()
 	t.Cleanup(func() { s.Stop() })
 	port := ln.Addr().(*net.TCPAddr).Port
 	return &testEnv{s: s, base: fmt.Sprintf("http://127.0.0.1:%d", port), token: cfg.Token}
@@ -67,7 +67,7 @@ func (e *testEnv) doRaw(method, path string, body any, token string) (int, []byt
 	if err != nil {
 		return 0, nil, err
 	}
-	defer resp.Body.Close()
+	defer func() { _ = resp.Body.Close() }()
 	data, err := io.ReadAll(resp.Body)
 	return resp.StatusCode, data, err
 }
@@ -179,11 +179,14 @@ func openStream(t *testing.T, e *testEnv, session string) *stream {
 		t.Fatal(err)
 	}
 	if resp.StatusCode != http.StatusOK {
-		resp.Body.Close()
+		_ = resp.Body.Close()
 		cancel()
 		t.Fatalf("open stream: status %d", resp.StatusCode)
 	}
-	t.Cleanup(func() { cancel(); resp.Body.Close() })
+	t.Cleanup(func() {
+		cancel()
+		_ = resp.Body.Close()
+	})
 	return &stream{resp: resp, sc: bufio.NewScanner(resp.Body), cancel: cancel}
 }
 
@@ -414,7 +417,7 @@ func TestV1RequiresAuth(t *testing.T) {
 	}
 	assertUnauthorizedBody(t, data)
 	// Malformed header.
-	status, data = e.do(t, http.MethodGet, "/v1/agents", nil, "")
+	status, _ = e.do(t, http.MethodGet, "/v1/agents", nil, "")
 	if status != http.StatusUnauthorized {
 		t.Fatalf("malformed: status %d", status)
 	}
@@ -424,7 +427,7 @@ func TestV1RequiresAuth(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	resp.Body.Close()
+	_ = resp.Body.Close()
 	if resp.StatusCode != http.StatusUnauthorized {
 		t.Fatalf("malformed token: status %d", resp.StatusCode)
 	}
@@ -491,7 +494,7 @@ func TestSseUnregisteredRejected(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	defer resp.Body.Close()
+	defer func() { _ = resp.Body.Close() }()
 	if resp.StatusCode != http.StatusNotFound {
 		t.Fatalf("status %d", resp.StatusCode)
 	}
@@ -544,8 +547,8 @@ func TestPoolSnapshotOnConnect(t *testing.T) {
 	register(t, e, "sess-b", "bob")
 	st := openStream(t, e, "sess-b")
 
-	lines := mustReadFrame(t, st, 2*time.Second) // hello
-	lines = mustReadFrame(t, st, 2*time.Second)
+	mustReadFrame(t, st, 2*time.Second) // hello
+	lines := mustReadFrame(t, st, 2*time.Second)
 	event, _, data := parseFrame(lines)
 	if event != "pool_snapshot" {
 		t.Fatalf("expected pool_snapshot, got %q (%v)", event, lines)
@@ -566,8 +569,8 @@ func TestPoolSnapshotExcludesSelfAndIsArray(t *testing.T) {
 	register(t, e, "sess-a", "alice")
 	st := openStream(t, e, "sess-a")
 
-	lines := mustReadFrame(t, st, 2*time.Second) // hello
-	lines = mustReadFrame(t, st, 2*time.Second)
+	mustReadFrame(t, st, 2*time.Second) // hello
+	lines := mustReadFrame(t, st, 2*time.Second)
 	_, _, data := parseFrame(lines)
 	if !strings.Contains(data, `"agents":[]`) {
 		t.Fatalf("empty snapshot should be [] not null: %s", data)
@@ -910,7 +913,7 @@ func TestAwaitErrorPath(t *testing.T) {
 	if status != http.StatusOK {
 		t.Fatalf("response status %d", status)
 	}
-	status, data := e.do(t, http.MethodGet, "/v1/messages/"+msgID+"/await", nil, e.token)
+	_, data := e.do(t, http.MethodGet, "/v1/messages/"+msgID+"/await", nil, e.token)
 	got := decodeMap(t, data)
 	if got["status"] != "error" || got["error"] != "nope" {
 		t.Fatalf("await error: %v", got)
@@ -1044,7 +1047,6 @@ func TestStreamCloseBroadcastsLeft(t *testing.T) {
 
 	stAlice := openStream(t, e, "sess-a")
 	stAlice.cancel()
-	stAlice.resp.Body.Close()
 	m := mustReadEvent(t, st, 3*time.Second, "agent_left")
 	if m["session_id"] != "sess-a" || m["reason"] != "connection_closed" {
 		t.Fatalf("agent_left on close: %v", m)

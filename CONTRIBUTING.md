@@ -103,7 +103,7 @@ When you submit a pull request, please ensure:
 
 To set up a development environment:
 
-1. Install Go 1.22 or later
+1. Install Go 1.26 or later
 2. Install pi agent (https://pi.earendil.dev)
 3. Clone the repository
 4. Run `go mod download` to fetch dependencies

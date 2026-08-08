@@ -6,7 +6,7 @@ import (
 	"os"
 	"os/exec"
 
-	"comms-cli/internal/pi"
+	"github.com/daniel-c-ward/comms-cli/internal/pi"
 )
 
 // runJoin spawns `pi --cname <name> --project <project> [passthrough flags]`

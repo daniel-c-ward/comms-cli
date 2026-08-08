@@ -36,21 +36,29 @@ func TestJoinPiArgs(t *testing.T) {
 }
 
 func TestRunJoinMissingName(t *testing.T) {
-	if err := runJoin(nil); err == nil || !strings.Contains(err.Error(), "agent name required") {
-		t.Fatalf("got %v, want name-required error", err)
+	err := runJoin([]string{"pi", ""})
+	if err == nil || !strings.Contains(err.Error(), "agent name required") {
+		t.Fatalf("got %v, want agent name required error", err)
 	}
 }
 
 func TestRunJoinNoPi(t *testing.T) {
 	t.Setenv("PATH", t.TempDir())
-	err := runJoin([]string{"alpha", "--project", "smoke-demo"})
+	err := runJoin([]string{"pi", "alpha"})
 	if err == nil || !strings.Contains(err.Error(), "install pi") {
 		t.Fatalf("got %v, want install-pi error", err)
 	}
 }
 
-func TestRunJoinUnexpectedArg(t *testing.T) {
-	err := runJoin([]string{"alpha", "--bogus"})
+func TestRunJoinUnsupportedHarness(t *testing.T) {
+	err := runJoin([]string{"alpha", "beta"})
+	if err == nil || !strings.Contains(err.Error(), "unsupported harness") {
+		t.Fatalf("got %v, want unsupported-harness error", err)
+	}
+}
+
+func TestRunJoinUnknownFlag(t *testing.T) {
+	err := runJoin([]string{"--bogus", "pi", "alpha"})
 	if err == nil || !strings.Contains(err.Error(), "bogus") {
 		t.Fatalf("got %v, want unknown-flag error", err)
 	}

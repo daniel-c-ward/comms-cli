@@ -12,12 +12,11 @@ import (
 	"path/filepath"
 	"strconv"
 	"strings"
-	"syscall"
 	"text/tabwriter"
 	"time"
 
-	"comms-cli/internal/server"
-	"comms-cli/internal/state"
+	"github.com/daniel-c-ward/comms-cli/internal/server"
+	"github.com/daniel-c-ward/comms-cli/internal/state"
 )
 
 var httpClient = &http.Client{Timeout: 3 * time.Second}
@@ -82,8 +81,7 @@ func splitProjectArg(valueFlags map[string]bool, args []string) (string, []strin
 }
 
 func pidAlive(pid int) bool {
-	err := syscall.Kill(pid, 0)
-	return err == nil || err == syscall.EPERM
+	return processAlive(pid)
 }
 
 func runStart(args []string) error {
@@ -127,7 +125,7 @@ func runStart(args []string) error {
 	if err != nil {
 		return fmt.Errorf("start: open log %s: %w", logPath, err)
 	}
-	defer logF.Close()
+	defer func() { _ = logF.Close() }()
 
 	cmd := exec.Command(exe, "serve",
 		"--project", name,
@@ -140,7 +138,7 @@ func runStart(args []string) error {
 	cmd.Stdin = nil
 	cmd.Stdout = logF
 	cmd.Stderr = logF
-	cmd.SysProcAttr = &syscall.SysProcAttr{Setsid: true}
+	detachProcess(cmd)
 	if err := cmd.Start(); err != nil {
 		return fmt.Errorf("start: spawn hub: %w", err)
 	}
@@ -257,7 +255,7 @@ func runStop(args []string) error {
 	}
 
 	fmt.Printf("comms: stopping hub for %q (pid %d)\n", name, st.PID)
-	if err := syscall.Kill(st.PID, syscall.SIGTERM); err != nil {
+	if err := signalProcess(st.PID); err != nil {
 		return fmt.Errorf("stop: signal pid %d: %w", st.PID, err)
 	}
 	deadline := time.Now().Add(10 * time.Second)
@@ -283,7 +281,7 @@ func hubHealth(baseURL string) (healthInfo, error) {
 	if err != nil {
 		return h, err
 	}
-	defer resp.Body.Close()
+	defer func() { _ = resp.Body.Close() }()
 	if resp.StatusCode != http.StatusOK {
 		return h, fmt.Errorf("GET /health: %s", resp.Status)
 	}
@@ -308,7 +306,7 @@ func hubAgents(baseURL, project string) ([]server.AgentCard, error) {
 	if err != nil {
 		return nil, err
 	}
-	defer resp.Body.Close()
+	defer func() { _ = resp.Body.Close() }()
 	if resp.StatusCode == http.StatusUnauthorized {
 		return nil, fmt.Errorf("hub rejected the token (401)")
 	}
@@ -352,16 +350,16 @@ func renderAgents(agents []server.AgentCard) {
 		return
 	}
 	w := tabwriter.NewWriter(os.Stdout, 0, 4, 2, ' ', 0)
-	fmt.Fprintln(w, "NAME\tSTATUS\tMODEL\tCTX%\tQUEUE\tPURPOSE\tSESSION")
+	_, _ = fmt.Fprintln(w, "NAME\tSTATUS\tMODEL\tCTX%\tQUEUE\tPURPOSE\tSESSION")
 	for _, a := range agents {
 		purpose := a.Purpose
 		if purpose == "" {
 			purpose = "-"
 		}
-		fmt.Fprintf(w, "%s\t%s\t%s\t%d\t%d\t%s\t…%s\n",
+		_, _ = fmt.Fprintf(w, "%s\t%s\t%s\t%d\t%d\t%s\t…%s\n",
 			a.Name, a.Status, a.Model, a.ContextUsedPct, a.QueueDepth, purpose, shortID(a.SessionID))
 	}
-	w.Flush()
+	_ = w.Flush()
 }
 
 func shortID(id string) string {

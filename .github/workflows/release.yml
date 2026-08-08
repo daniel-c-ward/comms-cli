@@ -4,13 +4,14 @@ on:
   push:
     tags:
       - 'v*.*.*' # Push tags matching v1.2.3
+  workflow_dispatch:
+
+permissions:
+  contents: write # needed for GoReleaser to create GitHub release
 
 jobs:
   goreleaser:
     runs-on: ubuntu-latest
-    permissions:
-      contents: write # needed for GoReleaser to create GitHub release
-      packages: write # if using GitHub Packages
     steps:
       - uses: actions/checkout@v4
         with:
@@ -19,12 +20,13 @@ jobs:
       - name: Set up Go
         uses: actions/setup-go@v5
         with:
-          go-version: '1.23'
+          go-version: '1.26'
+          cache: true
 
       - name: Run GoReleaser
-        uses: goreleaser/goreleaser-action@v5
+        uses: goreleaser/goreleaser-action@v7
         with:
-          version: latest
+          version: v2.17.1
           args: release --clean
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

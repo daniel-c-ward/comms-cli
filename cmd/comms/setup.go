@@ -4,9 +4,9 @@ import (
 	"flag"
 	"fmt"
 
-	"comms-cli/internal/ext"
-	"comms-cli/internal/pi"
-	"comms-cli/internal/state"
+	"github.com/daniel-c-ward/comms-cli/internal/ext"
+	"github.com/daniel-c-ward/comms-cli/internal/pi"
+	"github.com/daniel-c-ward/comms-cli/internal/state"
 )
 
 // runSetup finds pi, installs the embedded coms-net extension into pi's

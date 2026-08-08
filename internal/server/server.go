@@ -1497,7 +1497,7 @@ func ulid() string {
 		bitOffset := 5 * i
 		byteIdx := bitOffset / 8
 		bitInByte := bitOffset % 8
-		var v uint16 = uint16(raw[byteIdx]) << 8
+		v := uint16(raw[byteIdx]) << 8
 		if byteIdx+1 < len(raw) {
 			v |= uint16(raw[byteIdx+1])
 		}

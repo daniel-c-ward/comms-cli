@@ -5,7 +5,7 @@ import (
 	"path/filepath"
 	"testing"
 
-	"comms-cli/internal/state"
+	"github.com/daniel-c-ward/comms-cli/internal/state"
 )
 
 func TestResolveProjectPrecedence(t *testing.T) {
