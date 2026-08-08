@@ -49,6 +49,7 @@ jobs:
           go-version-input: '1.26'
           go-package: ./...
           repo-checkout: false
+          cache: false
 
   build:
     runs-on: ubuntu-latest
