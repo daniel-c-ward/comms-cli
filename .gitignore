@@ -32,5 +32,6 @@ Thumbs.db
 # Already ignored (but keeping for clarity)
 .git
 .scratch
-docs
+docs/*
+!docs/demo.gif
 graphify-out
